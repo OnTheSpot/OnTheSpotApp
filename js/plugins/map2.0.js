@@ -234,6 +234,13 @@
 			this.el.mapMarkers;
 			this.el.cluster;
 			this.el.trackingTimer;
+
+			// define the directions objects for if they are needed
+			this.directionService = new google.maps.DirectionsService();
+			this.directionsDisplay = new google.maps.DirectionsRenderer({
+				suppressMarkers : true
+			});
+			this.directionsDisplay.setMap(this.el.mapObject);
 			
 			// set the center of the map
 			if (this.opts.trackLocation === true) {
@@ -569,22 +576,20 @@
 
 			google.maps.event.addListener(infoWindow, "domready", function() {
 				$(".infoWindow .btn").on("click", function() {
-					infoWindow.close();
-					var routeEnd = new google.maps.LatLng(pin.position.Ya, pin.position.Za);
-					var routeStart = new google.maps.LatLng(mapObj.userPos[0], mapObj.userPos[1]);
-					var directionService = new google.maps.DirectionsService();
-					var directionsDisplay = new google.maps.DirectionsRenderer();
-					directionsDisplay.setMap(mapObj.el.mapObject);
-					var directionRequest = {
-						origin: routeStart,
-						destination: routeEnd,
-						travelMode: google.maps.TravelMode.DRIVING
-					}
-					directionService.route(directionRequest, function(response, status) {
+					var routeEnd = new google.maps.LatLng(pin.position.Ya, pin.position.Za),
+						routeStart = new google.maps.LatLng(mapObj.userPos[0], mapObj.userPos[1]),
+						directionRequest = {
+							origin: routeStart,
+							destination: routeEnd,
+							travelMode: google.maps.TravelMode.DRIVING
+						};
+
+					mapObj.directionService.route(directionRequest, function(response, status) {
 						if (status == google.maps.DirectionsStatus.OK) {
-							directionsDisplay.setDirections(response);
+							mapObj.directionsDisplay.setDirections(response);
 						}
 					});
+					infoWindow.close();
 					// get the lat/lng of this pin and then find directions to current location
 				})
 			})

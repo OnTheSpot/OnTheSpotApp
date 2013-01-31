@@ -1,5 +1,5 @@
 /* 
-	jQuery Googlemap Plugin - v2.0	 
+	jQuery Googlemap Plugin - v2.1	 
 	Copyright (c) 2011 Daniel Thomson
 	https://github.com/dansdom/plugins-googlemap
 	
@@ -30,6 +30,7 @@
 //			- the first thing is the pass the pin through, then maybe pass some options
 //			- adding option to add custom function to the map events as well
 // v2.0		- integrated this plugin into my new architecture: https://github.com/dansdom/plugins-template-v2
+// v2.1 	- added suport for polygons
 
 // Custom Pin:
 // for each custom pin the setting can be turned off by using "false", 
@@ -79,6 +80,7 @@
 		mapCanvas : "mapPane",  // the id of the map canvas
 		pinCenter : true,
 		trackLocation : true,
+		centerOnLocation : true,
 		trackingPeriod : false,	// if set to false then it won't 'track' the user, only center the map initially on user location
 		trackingCircle : true,
 		centerMarker : {}, // e.g. of a center pin definition - {title:"center marker", pin: "myCustomPin", infoWindow: "<h1>this is the center pin</h1>"},
@@ -262,8 +264,9 @@
 				this.el.trackingTimer = setTimeout(function(){mapObj.updateLocation();}, this.opts.trackingPeriod);
 			}
 
+			// debugging event
 			google.maps.event.addListener(this.el.mapObject, 'click', function(e) {
-				console.log(e.latLng.Ya + ", " + e.latLng.Za);
+				//console.log(e.latLng.Ya + ", " + e.latLng.Za);
 			});
 			
 		},
@@ -278,8 +281,8 @@
 					function(position) {					
 						//console.log("this is navigator.geolocation:");
 						//console.log(position.coords);
-						var userPos = [position.coords.latitude, position.coords.longitude];
-						mapObj.geoSuccess(userPos);
+						mapObj.userPos = [position.coords.latitude, position.coords.longitude];
+						mapObj.geoSuccess(mapObj.userPos);
 					},
 					// error function
 					function() {
@@ -294,8 +297,8 @@
 					// success function
 					function(position) {	
 						//console.log("this is google gears");				
-						var userPos = [position.latitude, position.longitude];
-						mapObj.geoSuccess(userPos);
+						mapObj.userPos = [position.latitude, position.longitude];
+						mapObj.geoSuccess(mapObj.userPos);
 					},
 					// error function
 					function() {
@@ -317,7 +320,7 @@
 			// console.log(position);
 			var userPosition = new google.maps.LatLng(position[0], position[1]);
 			// console.log(position);
-			if (!this.el.mapObject.centerSet) {
+			if (!this.el.mapObject.centerSet  && this.opts.centerOnLocation) {
 				this.el.mapObject.setCenter(userPosition);
 			}
 			this.el.mapObject.centerSet = true;
@@ -405,12 +408,12 @@
 			if (markerLength > 0) {
 				for (i = 0; i < markerLength; i += 1) {
 					pin = markers[i];				
-					infoWindow = markers[i].infoWindow;
-					pinEvents = markers[i].pinEvent;
-					pinFunction = markers[i].pinFunction;
+					infoWindow = pin.infoWindow;
+					pinEvents = pin.pinEvent;
+					pinFunction = pin.pinFunction;
 					// check to see if a custom pin has been assigned - else drop in a regular pin
 					// i need to return the marker so I can attach events to it in a different function
-					if (markers[i].pin) {
+					if (pin.pin) {
 						// then go make a custom pin marker
 						currentPin = this.customPin(pin);
 					}
@@ -426,7 +429,7 @@
 									
 					// add info windows here
 					if (infoWindow) {
-						this.addInfoWindow(currentPin, infoWindow);
+						this.addInfoWindow(currentPin, infoWindow, pin);
 					}
 					
 					// add pin events
@@ -434,9 +437,9 @@
 						this.addPinEvents(pinEvents, currentPin);
 					}
 					
-					// add a custom function to the pin which is not a map event
-					if (pinFunction) {
-						pinFunction(currentPin);
+					// add a custom function to the pin which is not a map event, pass the map object in as well
+					if (typeof pinFunction === "function") {
+						pinFunction(currentPin, this.el.mapObject);
 					}
 					// store all the pins together into an array
 					markerArray.push(currentPin);
@@ -551,17 +554,45 @@
 				google.maps.event.addListener(currentPin, name, event);
 			}
 		},
+		// a generic add events function ???
 		addEvents : function() {
 
 		},
 		// add an infoWindow to the pin marker
-		addInfoWindow : function(pin, infoWindow) {
+		addInfoWindow : function(pin, infoWindow, pinOpts) {
 			var mapObj = this;
 			infoWindow = new google.maps.InfoWindow({content: infoWindow});
 			
 			google.maps.event.addListener(pin, "click", function(){
 				infoWindow.open(mapObj.el.mapObject, pin);
 			});
+
+			google.maps.event.addListener(infoWindow, "domready", function() {
+				$(".infoWindow .btn").on("click", function() {
+					infoWindow.close();
+					var routeEnd = new google.maps.LatLng(pin.position.Ya, pin.position.Za);
+					var routeStart = new google.maps.LatLng(mapObj.userPos[0], mapObj.userPos[1]);
+					var directionService = new google.maps.DirectionsService();
+					var directionsDisplay = new google.maps.DirectionsRenderer();
+					directionsDisplay.setMap(mapObj.el.mapObject);
+					var directionRequest = {
+						origin: routeStart,
+						destination: routeEnd,
+						travelMode: google.maps.TravelMode.DRIVING
+					}
+					directionService.route(directionRequest, function(response, status) {
+						if (status == google.maps.DirectionsStatus.OK) {
+							directionsDisplay.setDirections(response);
+						}
+					});
+					// get the lat/lng of this pin and then find directions to current location
+				})
+			})
+
+			// if there are any functions to bind in the infowindow
+			if (typeof pinOpts.windowFunction === "function") {
+				pinOpts.windowFunction(infoWindow, pin, mapObj.el.mapObject);
+			}
 		},
 		option : function(args) {
 			this.opts = $.extend(true, {}, this.opts, args);

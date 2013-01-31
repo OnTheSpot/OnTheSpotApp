@@ -10,10 +10,22 @@ Project = {
 
 		if ($("#map").length > 0) {
 
+			// function that gets the route from the current pin
+			function getRoute() {
+
+			};
+
+			$(document).on("click", ".infoWindow .btn", function() {
+				var lat = $(this).data("lat");
+				var lng = $(this).data("lng");
+				getRoute(lat, lng);
+			});
+
 			$("#map").mapMe({
 				mapCanvas : 'map',
-				pinCenter : true, 
-                trackLocation : false,
+				pinCenter : false,
+				centerOnLocation : false,
+                trackLocation : true,
                 trackingPeriod : false, 
                 trackingCircle : false,
 				markerCluster : true,
@@ -23,98 +35,98 @@ Project = {
 						lat: -33.8745313807035, 
 						lng: 151.219060499969, 
 						pin: "demoPin", 
-						infoWindow: "<h1><a href='content/forbesclub.html'>The Forbes Club</a></h1>"
+						infoWindow: "<div class='infoWindow'><h1><a href='content/forbesclub.html'>The Forbes Club</a></h1><p><button class='btn small'>get route</button></p></div>"
 					},
 					{
 						title: 'First TV Broadcast', 
 						lat: -33.874798, 
 						lng: 151.222892, 
 						pin: "demoPin", 
-						infoWindow: "<h1><a href='content/firsttvbroadcast.html'>First TV Broadcast</a></h1>"
+						infoWindow: "<div class='infoWindow'><h1><a href='content/firsttvbroadcast.html'>First TV Broadcast</a></h1><p><button class='btn small'>get route</button></p></div>"
 					},
 					{
 						title: 'Bea Miles', 
 						lat: -33.8747286865796, 
 						lng: 151.220262129608, 
 						pin: "demoPin", 
-						infoWindow: "<h1><a href='content/beamiles.html'>The Dirty Half Mile</a></h1>"
+						infoWindow: "<div class='infoWindow'><h1><a href='content/beamiles.html'>The Dirty Half Mile</a></h1><p><button class='btn small'>get route</button></p></div>"
 					},
 					{
 						title: 'The Dirty Half Mile', 
 						lat: -33.8740245296579, 
 						lng: 151.223105271164, 
 						pin: "demoPin", 
-						infoWindow: "<h1><a href='content/dirtyhalfmile.html'>The Dirty Half Mile</a></h1>"
+						infoWindow: "<div class='infoWindow'><h1><a href='content/dirtyhalfmile.html'>The Dirty Half Mile</a></h1><p><button class='btn small'>get route</button></p></div>"
 					},
 					{
 						title: 'The Juanita Nielsen Mystery', 
 						lat: -33.8736325865397, 
 						lng: 151.222568829361, 
 						pin: "demoPin", 
-						infoWindow: "<h1><a href='content/juanitenielsen.html'>The Juanita Nielsen Mystery</a></h1>"
+						infoWindow: "<div class='infoWindow'><h1><a href='content/juanitenielsen.html'>The Juanita Nielsen Mystery</a></h1><p><button class='btn small'>get route</button></p></div>"
 					},
 					{
 						title: 'Kings Cross Train Station', 
 						lat: -33.8745679023673, 
 						lng: 151.222440083328, 
 						pin: "demoPin", 
-						infoWindow: "<h1><a href='content/kctrainstation.html'>Kings Cross Train Station</a></h1>"
+						infoWindow: "<div class='infoWindow'><h1><a href='content/kctrainstation.html'>Kings Cross Train Station</a></h1><p><button class='btn small'>get route</button></p></div>"
 					},
 					{
 						title: 'The Sebel Townhouse', 
 						lat: -33.8725810120763, 
 						lng: 151.227235873047, 
 						pin: "demoPin", 
-						infoWindow: "<h1><a href='content/sebeltownhouse.html'>The Sebel Townhouse</a></h1>"
+						infoWindow: "<div class='infoWindow'><h1><a href='content/sebeltownhouse.html'>The Sebel Townhouse</a></h1><p><button class='btn small'>get route</button></p></div>"
 					},
 					{
 						title: 'Mick Fowler - 115 Victoria St', 
 						lat: -33.8712532750295, 
 						lng: 151.222794134918, 
 						pin: "demoPin", 
-						infoWindow: "<h1><a href='content/mickfowler.html'>Mick Fowler - 115 Victoria St</a></h1>"
+						infoWindow: "<div class='infoWindow'><h1><a href='content/mickfowler.html'>Mick Fowler - 115 Victoria St</a></h1><p><button class='btn small'>get route</button></p></div>"
 					},
 					{
 						title: 'The Kid Stakes', 
 						lat: -33.8688949500999, 
 						lng: 151.222839725987, 
 						pin: "demoPin", 
-						infoWindow: "<h1><a href='content/kidstakes.html'>The Kid Stakes</a></h1>"
+						infoWindow: "<div class='infoWindow'><h1><a href='content/kidstakes.html'>The Kid Stakes</a></h1><p><button class='btn small'>get route</button></p></div>"
 					},
 					{
 						title: 'The Sydney Stadium', 
 						lat: -33.8760, 
 						lng: 151.2258, 
 						pin: "demoPin", 
-						infoWindow: "<h1><a href='content/sydneystadium.html'>The Sydney Stadium</a></h1>"
+						infoWindow: "<div class='infoWindow'><h1><a href='content/sydneystadium.html'>The Sydney Stadium</a></h1><p><button class='btn small' data-lat='-33.8760' data-lng='151.2258'>get route</button></p></div>"
 					},
 					{
 						title: 'Victoria Heights', 
 						lat: -33.8699, 
 						lng: 151.2230, 
 						pin: "demoPin", 
-						infoWindow: "<h1><a href='content/victoriaheights.html'>Victoria Heights</a></h1>"
+						infoWindow: "<div class='infoWindow'><h1><a href='content/victoriaheights.html'>Victoria Heights</a></h1><p><button class='btn small'>get route</button></p></div>"
 					},
 					{
 						title: "Fishing in the 'Loo", 
 						lat: -33.8695185297341, 
 						lng: 151.220747602956, 
 						pin: "demoPin", 
-						infoWindow: "<h1><a href='content/fishingintheloo.html'>Fishing in the 'Loo</a></h1>"
+						infoWindow: "<div class='infoWindow'><h1><a href='content/fishingintheloo.html'>Fishing in the 'Loo</a></h1><p><button class='btn small'>get route</button></p></div>"
 					},
 					{
 						title: "Saving Woolloomooloo", 
 						lat: -33.8727, 
 						lng: 151.2191, 
 						pin: "demoPin", 
-						infoWindow: "<h1><a href='content/savingloo.html'>Saving Woolloomooloo</a></h1>"
+						infoWindow: "<div class='infoWindow'><h1><a href='content/savingloo.html'>Saving Woolloomooloo</a></h1><p><button class='btn small'>get route</button></p></div>"
 					},
 					{
 						title: "The Yellow House", 
 						lat: -33.8688410547891, 
 						lng: 151.225468290822, 
 						pin: "demoPin", 
-						infoWindow: "<h1><a href='content/yellowhouse.html'>The Yellow House</a></h1>"
+						infoWindow: "<div class='infoWindow'><h1><a href='content/yellowhouse.html'>The Yellow House</a></h1><p><button class='btn small'>get route</button></p></div>"
 					}
 				],
 				customPins :	{							  					
@@ -208,6 +220,7 @@ Project = {
 					zoom: 15
 				}					   
 			});
+
 		}  // end of if statement
 
 	} // end of createMap function
